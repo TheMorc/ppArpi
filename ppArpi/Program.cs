@@ -102,8 +102,7 @@ namespace Morbot
             {
                 if (!e.Author.IsBot)
                 {
-                    if (e.Message.Content.StartsWith(".")) { }
-                    else
+                    if (!e.Message.Content.StartsWith("."))
                     {
                         Random rnd = new Random();
                         await discord.SendMessageAsync(e.Channel, arpášoveHlášky[rnd.Next(arpášoveHlášky.Count)]);
