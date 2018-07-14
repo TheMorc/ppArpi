@@ -1,17 +1,11 @@
 ﻿using System.Threading.Tasks;
 using DSharpPlus;
 using DSharpPlus.Entities;
-using System.Net;
 using System.IO;
-using System.Net.Http;
 using System;
 using System.Text;
 using Newtonsoft.Json;
-using System.Xml;
 using System.Collections.Generic;
-using DSharpPlus.VoiceNext;
-using System.Diagnostics;
-using System.Linq;
 
 namespace Morbot
 {
@@ -31,11 +25,11 @@ namespace Morbot
     {
         public static DiscordClient discord;
 
-        static VoiceNextExtension voice;
         public static ConfigJSON configuration = new ConfigJSON();
-        public static string version = "Arpiho1.1.3";
+        public static string version = "Arpiho1.1.2";
         public static DiscordMember owner;
         public static List<Hláška> arpášoveHlášky = new List<Hláška>() { };
+        public static List<string> arpášoveNasieračky = new List<string>() { "a", "y", "e", "i", "u", "e" };
 
         public class ConfigJSON
         {
@@ -46,15 +40,8 @@ namespace Morbot
         {
             initArpi();
             MainAsync(args).ConfigureAwait(false).GetAwaiter().GetResult();
-            AppDomain.CurrentDomain.ProcessExit += CurrentDomain_ProcessExit;
         }
 
-        private static void CurrentDomain_ProcessExit(object sender, EventArgs e)
-        {
-            discord.DisconnectAsync();
-
-
-        }
 
         private static void initArpi()
         {
@@ -118,12 +105,20 @@ namespace Morbot
                     else if (!e.Message.Content.StartsWith("."))
                     {
 
-                        for (int i = 1; i < arpášoveHlášky.Count; i++)
+                        for (int i = 0; i < arpášoveHlášky.Count; i++)
                         {
-                            if (e.Message.Content.ToLower().Contains(arpášoveHlášky[i].Atrigger))
+                            for (int io = 0; io < arpášoveNasieračky.Count; io++)
                             {
-                                await discord.SendMessageAsync(e.Channel, arpášoveHlášky[i].Ahláška);
-                                return;
+                                if (e.Message.Content.ToLower().Contains(arpášoveHlášky[i].Atrigger.Remove(arpášoveHlášky[i].Atrigger.Length - 1, 1) + arpášoveNasieračky[io]))
+                                {
+                                    await discord.SendMessageAsync(e.Channel, arpášoveHlášky[i].Ahláška);
+                                    return;
+                                }
+                                else if (e.Message.Content.ToLower().Contains(arpášoveHlášky[i].Atrigger))
+                                {
+                                    await discord.SendMessageAsync(e.Channel, arpášoveHlášky[i].Ahláška);
+                                    return;
+                                }
                             }
                         }
 
